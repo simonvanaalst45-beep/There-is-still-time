@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>I Saw the TV Glow</title>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #030303;
+      color: #ffffff;
+      font-family: 'Share Tech Mono', monospace;
+      line-height: 1.8;
+      padding: 60px 20px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    body::before {
+      content: " ";
+      display: block;
+      position: fixed;
+      top: 0; left: 0; bottom: 0; right: 0;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+      z-index: 999;
+      background-size: 100% 4px, 6px 100%;
+      pointer-events: none;
+    }
+
+    .container {
+      max-width: 750px;
+      width: 100%;
+      text-align: center;
+      position: relative;
+    }
+
+    #landing-view {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .quote-landing {
+      font-family: 'VT323', monospace;
+      font-size: 3.5rem;
+      letter-spacing: 0.05em;
+      color: #333333;
+      cursor: pointer;
+      transition: color 0.3s ease, text-shadow 0.3s ease;
+      padding: 20px;
+    }
+
+    .quote-landing:hover {
+      color: #ffffff;
+      text-shadow: 0 0 15px rgba(255, 255, 255, 1), 0 0 30px rgba(255, 255, 255, 0.8), 0 0 45px rgba(255, 255, 255, 0.4);
+    }
+
+    .menu-view {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 35px;
+    }
+
+    .menu-view.active {
+      display: flex;
+    }
+
+    .menu-list {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+      align-items: center;
+    }
+
+    .interactive-text {
+      font-family: 'VT323', monospace;
+      font-size: 2rem;
+      color: #333333;
+      cursor: pointer;
+      letter-spacing: 0.03em;
+      transition: color 0.3s ease, text-shadow 0.3s ease;
+    }
+
+    .interactive-text:hover {
+      color: #ffffff;
+      text-shadow: 0 0 15px rgba(255, 255, 255, 1), 0 0 30px rgba(255, 255, 255, 0.8), 0 0 45px rgba(255, 255, 255, 0.4);
+    }
+
+    .text-nav {
+      font-size: 0.85rem;
+      color: #666666;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      background: none;
+      border: none;
+      font-family: 'Share Tech Mono', monospace;
+      transition: color 0.3s ease, text-shadow 0.3s ease;
+      margin-top: 10px;
+    }
+
+    .text-nav:hover {
+      color: #ffffff;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+    }
+
+    .detail-view {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 30px;
+    }
+
+    .detail-view.active {
+      display: flex;
+    }
+
+    .detail-image-container {
+      position: relative;
+      cursor: pointer;
+      display: inline-block;
+    }
+
+    .detail-image {
+      max-width: 100%;
+      max-height: 500px;
+      display: block;
+      margin: 0 auto;
+      transition: transform 0.3s ease, filter 0.2s ease;
+    }
+
+    .detail-image-container:hover .detail-image {
+      transform: scale(1.02);
+      filter: brightness(1.15) drop-shadow(0 0 12px rgba(255,255,255,0.4));
+      animation: bulbFlicker 0.12s infinite alternate;
+    }
+
+    @keyframes bulbFlicker {
+      0% { opacity: 0.95; filter: brightness(1.1) drop-shadow(0 0 8px rgba(255,255,255,0.3)); }
+      100% { opacity: 1; filter: brightness(1.25) drop-shadow(0 0 18px rgba(255,255,255,0.6)); }
+    }
+
+    .detail-quote {
+      font-family: 'VT323', monospace;
+      font-size: 2.2rem;
+      color: #ffffff;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
+    }
+
+    .detail-story {
+      max-width: 650px;
+      font-size: 1rem;
+      color: #999999;
+      line-height: 1.9;
+      text-align: center;
+      margin-top: 25px;
+    }
+
+    .lightbox {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background-color: rgba(0, 0, 0, 0.92);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      cursor: zoom-out;
+      padding: 20px;
+    }
+
+    .lightbox.active {
+      display: flex;
+    }
+
+    .lightbox img {
+      max-width: 95vw;
+      max-height: 95vh;
+      object-fit: contain;
+      box-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    
+    <div id="landing-view">
+      <div class="quote-landing" onclick="showMenu()">
+        There is still time.
+      </div>
+    </div>
+
+    <div id="menu-view" class="menu-view">
+      <div class="menu-list">
+        <span class="interactive-text" onclick="showDetail('baby')">This is how it feels to walk through the dark.</span>
+        <span class="interactive-text" onclick="showDetail('floating')">It’s not a movie. It’s what’s underneath.</span>
+        <span class="interactive-text" onclick="showDetail('multiple')">There is still time. ... No, there's not.</span>
+      </div>
+
+      <button class="text-nav" onclick="showLanding()">[ Return ]</button>
+    </div>
+
+    <div id="detail-view" class="detail-view">
+      
+      <div id="detail-baby" class="detail-content hidden">
+        <div class="detail-quote">This is how it feels to walk through the dark.</div>
+        <div class="detail-image-container" onclick="openLightbox('babyio.png')">
+          <img src="babyio.png" alt="Poster 1 - The Baby" class="detail-image" />
+        </div>
+        <div class="detail-story">
+          <p>It begins in early isolation, where you are all alone as a child watching a screen, finding absolute safety in the dark. At this stage, retreat feels entirely harmless because the TV glow creates a protective barrier between you and the unpredictable world outside. Sheltered in this safe point, nothing bad can touch you—yet this is where the quiet habit of hiding away from reality silently takes root, setting the stage for what is to come.</p>
+        </div>
+      </div>
+
+      <div id="detail-floating" class="detail-content hidden">
+        <div class="detail-quote">It’s not a movie. It’s what’s underneath.</div>
+        <div class="detail-image-container" onclick="openLightbox('stoopid.png')">
+          <img src="stoopid.png" alt="Poster 2 - The Sky" class="detail-image" />
+        </div>
+        <div class="detail-story">
+          <p>As time moves forward and you grow older, that initial sanctuary transforms into an inescapable cage. The comfort zone stops being a temporary retreat and becomes a permanent state of suspension where you can no longer leave even if you try. Floating powerlessly within the beam of the screen, you are completely paralyzed, unable to move, grow, or change your position as life freezes around you—until the illusion shatters completely.</p>
+        </div>
+      </div>
+
+      <div id="detail-multiple" class="detail-content hidden">
+        <div class="detail-quote">There is still time. ... No, there's not.</div>
+        <div class="detail-image-container" onclick="openLightbox('kouhi.png')">
+          <img src="kouhi.png" alt="Poster 3 - The Clones" class="detail-image" />
+        </div>
+        <div class="detail-story">
+          <p>In the final culmination of the journey, he looks around and sees figures—clones of himself and others who spent their entire lives making the exact same frightened choice to stay safe. In this haunting moment, the full weight of regret crashes down, exposing the chilling truth that an entire lifetime was traded away for an illusion, leaving nothing behind but the realization of what could have been if only fear hadn't won.</p>
+        </div>
+      </div>
+
+      <button class="text-nav" onclick="showMenu()">[ Return ]</button>
+
+    </div>
+
+  </div>
+
+  <div id="lightbox" class="lightbox" onclick="closeLightbox()">
+    <img id="lightbox-img" src="" alt="Expanded Poster" />
+  </div>
+
+  <script>
+    function showMenu() {
+      document.getElementById('landing-view').style.display = 'none';
+      document.getElementById('detail-view').classList.remove('active');
+      document.getElementById('menu-view').classList.add('active');
+      window.scrollTo(0, 0);
+    }
+
+    function showLanding() {
+      document.getElementById('menu-view').classList.remove('active');
+      document.getElementById('landing-view').style.display = 'flex';
+      window.scrollTo(0, 0);
+    }
+
+    function showDetail(id) {
+      document.getElementById('menu-view').classList.remove('active');
+      document.getElementById('detail-view').classList.add('active');
+      
+      document.getElementById('detail-baby').classList.add('hidden');
+      document.getElementById('detail-floating').classList.add('hidden');
+      document.getElementById('detail-multiple').classList.add('hidden');
+      
+      document.getElementById('detail-' + id).classList.remove('hidden');
+      window.scrollTo(0, 0);
+    }
+
+    function openLightbox(src) {
+      const lightbox = document.getElementById('lightbox');
+      const lightboxImg = document.getElementById('lightbox-img');
+      lightboxImg.src = src;
+      lightbox.classList.add('active');
+    }
+
+    function closeLightbox() {
+      const lightbox = document.getElementById('lightbox');
+      lightbox.classList.remove('active');
+    }
+  </script>
+</body>
+</html> 
